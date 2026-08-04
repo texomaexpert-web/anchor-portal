@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  /* Warm off-white paper, near-black ink, one deep-teal accent. */
+  --color-paper: #faf8f4;
+  --color-surface: #fffefb;
+  --color-ink: #1d1a16;
+  --color-ink-muted: #6e675c;
+  --color-ink-faint: #a49c8f;
+  --color-line: #e9e4da;
+  --color-line-strong: #d9d2c4;
+
+  --color-accent: #0e6e64;
+  --color-accent-deep: #0a5049;
+  --color-accent-soft: #e6f0ee;
+
+  /* Semantic only — overdue/attention. Not a second accent. */
+  --color-rust: #b0512b;
+  --color-rust-soft: #f7ebe3;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
