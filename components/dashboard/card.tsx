@@ -8,18 +8,22 @@ export function Card({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-line bg-surface shadow-[0_1px_2px_rgba(29,26,22,0.04)]">
-      <header className="flex items-baseline justify-between border-b border-line px-5 py-3.5">
-        <h2 className="text-sm font-semibold tracking-tight text-ink">
+    <section className="rounded-lg border border-hairline bg-panel">
+      <header className="flex items-baseline justify-between border-b border-hairline px-4 py-3">
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
           {title}
         </h2>
-        {meta && <span className="text-xs text-ink-faint">{meta}</span>}
+        {meta && (
+          <span className="font-mono text-[10px] tabular-nums text-ink-faint">
+            {meta}
+          </span>
+        )}
       </header>
-      <div className="px-5 py-4">{children}</div>
+      <div className="px-4 py-3.5">{children}</div>
     </section>
   );
 }
 
 export function EmptyLine({ children }: { children: React.ReactNode }) {
-  return <p className="py-1 text-[15px] text-ink-muted">{children}</p>;
+  return <p className="py-1 text-sm text-ink-muted">{children}</p>;
 }

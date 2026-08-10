@@ -32,11 +32,13 @@ export default async function DashboardPage() {
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
       <header className="mb-8">
-        <p className="text-sm text-ink-faint">{formatDayDate()}</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink">
+        <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-ink-faint">
+          {formatDayDate()}
+        </p>
+        <h1 className="mt-1.5 text-xl font-semibold tracking-tight text-ink">
           {greeting()}, {firstName}
         </h1>
-        <p className="mt-1 text-[15px] text-ink-muted">
+        <p className="mt-1 text-sm text-ink-muted">
           {data.agingLeads.length === 0
             ? "Nothing is slipping. Here's your day."
             : `${data.agingLeads.length} lead${data.agingLeads.length === 1 ? " needs" : "s need"} attention first.`}

@@ -13,6 +13,23 @@ function nextStepLine(item: AgingLead): string {
     : "Reach out — never contacted";
 }
 
+// The signature anti-ghosting signal: how far gone is this lead?
+// Fresh flags are still warm; the longer it sits, the colder it gets.
+type Temperature = "warming" | "holding" | "cooling";
+
+function temperature(item: AgingLead): Temperature {
+  const d = daysAgo(item.overdueSince);
+  if (d <= 1) return "warming";
+  if (d <= 4) return "holding";
+  return "cooling";
+}
+
+const tempStyles: Record<Temperature, { dot: string; text: string }> = {
+  warming: { dot: "bg-accent", text: "text-accent" },
+  holding: { dot: "bg-aging", text: "text-aging" },
+  cooling: { dot: "bg-overdue", text: "text-overdue" },
+};
+
 export function AgingLeads({ items }: { items: AgingLead[] }) {
   return (
     <Card
@@ -22,8 +39,9 @@ export function AgingLeads({ items }: { items: AgingLead[] }) {
       {items.length === 0 ? (
         <EmptyLine>All caught up. Nice.</EmptyLine>
       ) : (
-        <ul className="divide-y divide-line">
+        <ul className="divide-y divide-hairline">
           {items.map((item) => {
+            const temp = temperature(item);
             const badge = item.overdueTask?.due_at
               ? overdueLabel(item.overdueTask.due_at)
               : item.lead.last_contacted_at
@@ -32,24 +50,30 @@ export function AgingLeads({ items }: { items: AgingLead[] }) {
             return (
               <li key={item.lead.id} className="flex flex-col gap-1 py-3 first:pt-0 last:pb-0">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="truncate text-[15px] font-medium text-ink">
-                    {item.lead.first_name} {item.lead.last_name}
-                    <span className="ml-2 text-xs font-normal capitalize text-ink-faint">
-                      {item.lead.side} · {item.lead.status.replaceAll("_", " ")}
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span
+                      className={`h-1.5 w-1.5 shrink-0 rounded-full ${tempStyles[temp].dot}`}
+                      title={temp}
+                    />
+                    <span className="truncate text-sm font-medium text-ink">
+                      {item.lead.first_name} {item.lead.last_name}
+                      <span className="ml-2 text-xs font-normal capitalize text-ink-faint">
+                        {item.lead.side} · {item.lead.status.replaceAll("_", " ")}
+                      </span>
                     </span>
                   </span>
                   <span
-                    className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-                      item.overdueTask
-                        ? "bg-rust-soft text-rust"
-                        : "bg-line/60 text-ink-muted"
+                    className={`shrink-0 rounded-[4px] border border-hairline bg-raised px-1.5 py-px font-mono text-[10px] tabular-nums ${
+                      item.overdueTask ? "text-overdue" : "text-ink-muted"
                     }`}
                   >
                     {badge}
                   </span>
                 </div>
-                <p className="truncate text-sm text-ink-muted">
-                  <span className="font-medium text-accent-deep">Next:</span>{" "}
+                <p className="truncate pl-3.5 text-xs text-ink-muted">
+                  <span className={`font-medium ${tempStyles[temp].text}`}>
+                    Next:
+                  </span>{" "}
                   {nextStepLine(item)}
                 </p>
               </li>
