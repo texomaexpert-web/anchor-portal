@@ -14,14 +14,14 @@ export function TodayAppointments({
       {items.length === 0 ? (
         <EmptyLine>Nothing on the calendar today.</EmptyLine>
       ) : (
-        <ul className="divide-y divide-line">
+        <ul className="divide-y divide-hairline">
           {items.map((appt) => (
             <li key={appt.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
-              <span className="w-16 shrink-0 pt-0.5 text-sm font-medium tabular-nums text-accent-deep">
+              <span className="w-16 shrink-0 pt-0.5 font-mono text-xs font-medium tabular-nums text-accent">
                 {formatTime(appt.starts_at)}
               </span>
               <div className="min-w-0 leading-snug">
-                <div className="truncate text-[15px] font-medium text-ink">
+                <div className="truncate text-sm font-medium text-ink">
                   {appt.lead
                     ? `${appt.lead.first_name} ${appt.lead.last_name}`
                     : "Unknown lead"}
@@ -29,7 +29,7 @@ export function TodayAppointments({
                     {appt.type.replaceAll("_", " ")}
                   </span>
                 </div>
-                <div className="truncate text-sm text-ink-muted">
+                <div className="truncate text-xs text-ink-muted">
                   {[appt.location, showAgent ? appt.agentName : null]
                     .filter(Boolean)
                     .join(" · ") || "No location set"}
