@@ -1,4 +1,4 @@
-// TypeScript types for the existing Anchor Portal schema in Supabase Postgres.
+// TypeScript types for the Anchor Portal schema (supabase/migrations).
 // Written in the shape `supabase gen types typescript` produces so they can be
 // regenerated from the live database later without touching call sites:
 //   npx supabase gen types typescript --project-id yxmgbuxtpeprfysxqevb > lib/supabase/database.types.ts
@@ -15,6 +15,35 @@ export type AgentRole = "agent" | "broker";
 export type LeadSide = "buyer" | "seller";
 export type MessageDirection = "inbound" | "outbound";
 export type MessageChannel = "sms" | "email";
+export type LeadStatus =
+  | "lead_in"
+  | "contact_attempted"
+  | "contact_made"
+  | "nurturing"
+  | "appointment_set"
+  | "listed"
+  | "pending"
+  | "under_contract"
+  | "sold"
+  | "dead"
+  | "uncontacted"
+  | "attempted_contact"
+  | "contacted"
+  | "contract";
+export type ActivityEvent =
+  | "listing_view"
+  | "search"
+  | "site_visit"
+  | "saved_listing"
+  | "form_submit";
+export type AppointmentType =
+  | "showing"
+  | "listing_consult"
+  | "buyer_consult"
+  | "closing"
+  | "other";
+export type ContactMethod = "call" | "text" | "email" | "mailer" | "in_person";
+export type ContactOutcome = "reached" | "no_answer" | "left_voicemail" | "sent";
 
 export type Database = {
   public: {
@@ -28,6 +57,8 @@ export type Database = {
           role: AgentRole;
           active: boolean;
           created_at: string;
+          last_login_at: string | null;
+          previous_login_at: string | null;
         };
         Insert: {
           id?: string;
@@ -37,6 +68,8 @@ export type Database = {
           role?: AgentRole;
           active?: boolean;
           created_at?: string;
+          last_login_at?: string | null;
+          previous_login_at?: string | null;
         };
         Update: {
           id?: string;
@@ -46,39 +79,47 @@ export type Database = {
           role?: AgentRole;
           active?: boolean;
           created_at?: string;
+          last_login_at?: string | null;
+          previous_login_at?: string | null;
         };
         Relationships: [];
       };
       lead: {
         Row: {
           id: string;
-          first_name: string;
-          last_name: string;
+          first_name: string | null;
+          last_name: string | null;
           phone: string | null;
           email: string | null;
           side: LeadSide;
-          status: string;
+          status: LeadStatus;
           source: string | null;
           agent_id: string | null;
           created_at: string;
           last_activity_at: string | null;
           last_contacted_at: string | null;
           notes_summary: string | null;
+          assigned_at: string | null;
+          dead_requested_at: string | null;
+          dead_requested_by: string | null;
         };
         Insert: {
           id?: string;
-          first_name: string;
-          last_name: string;
+          first_name?: string | null;
+          last_name?: string | null;
           phone?: string | null;
           email?: string | null;
           side: LeadSide;
-          status?: string;
+          status?: LeadStatus;
           source?: string | null;
           agent_id?: string | null;
           created_at?: string;
           last_activity_at?: string | null;
           last_contacted_at?: string | null;
           notes_summary?: string | null;
+          assigned_at?: string | null;
+          dead_requested_at?: string | null;
+          dead_requested_by?: string | null;
         };
         Update: {
           id?: string;
@@ -87,13 +128,16 @@ export type Database = {
           phone?: string | null;
           email?: string | null;
           side?: LeadSide;
-          status?: string;
+          status?: LeadStatus;
           source?: string | null;
           agent_id?: string | null;
           created_at?: string;
           last_activity_at?: string | null;
           last_contacted_at?: string | null;
           notes_summary?: string | null;
+          assigned_at?: string | null;
+          dead_requested_at?: string | null;
+          dead_requested_by?: string | null;
         };
         Relationships: [
           {
@@ -251,7 +295,7 @@ export type Database = {
           id: string;
           lead_id: string;
           agent_id: string | null;
-          type: string;
+          type: AppointmentType;
           location: string | null;
           starts_at: string;
           ends_at: string | null;
@@ -263,7 +307,7 @@ export type Database = {
           id?: string;
           lead_id: string;
           agent_id?: string | null;
-          type: string;
+          type?: AppointmentType;
           location?: string | null;
           starts_at: string;
           ends_at?: string | null;
@@ -275,7 +319,7 @@ export type Database = {
           id?: string;
           lead_id?: string;
           agent_id?: string | null;
-          type?: string;
+          type?: AppointmentType;
           location?: string | null;
           starts_at?: string;
           ends_at?: string | null;
@@ -304,8 +348,8 @@ export type Database = {
         Row: {
           id: string;
           lead_id: string;
-          from_status: string | null;
-          to_status: string;
+          from_status: LeadStatus | null;
+          to_status: LeadStatus;
           changed_by: string | null;
           agent_id: string | null;
           changed_at: string;
@@ -313,8 +357,8 @@ export type Database = {
         Insert: {
           id?: string;
           lead_id: string;
-          from_status?: string | null;
-          to_status: string;
+          from_status?: LeadStatus | null;
+          to_status: LeadStatus;
           changed_by?: string | null;
           agent_id?: string | null;
           changed_at?: string;
@@ -322,8 +366,8 @@ export type Database = {
         Update: {
           id?: string;
           lead_id?: string;
-          from_status?: string | null;
-          to_status?: string;
+          from_status?: LeadStatus | null;
+          to_status?: LeadStatus;
           changed_by?: string | null;
           agent_id?: string | null;
           changed_at?: string;
@@ -350,7 +394,7 @@ export type Database = {
           id: string;
           lead_id: string | null;
           session_id: string | null;
-          event_type: string;
+          event_type: ActivityEvent;
           listing_id: string | null;
           listing_address: string | null;
           search_criteria: Json | null;
@@ -361,7 +405,7 @@ export type Database = {
           id?: string;
           lead_id?: string | null;
           session_id?: string | null;
-          event_type: string;
+          event_type: ActivityEvent;
           listing_id?: string | null;
           listing_address?: string | null;
           search_criteria?: Json | null;
@@ -372,7 +416,7 @@ export type Database = {
           id?: string;
           lead_id?: string | null;
           session_id?: string | null;
-          event_type?: string;
+          event_type?: ActivityEvent;
           listing_id?: string | null;
           listing_address?: string | null;
           search_criteria?: Json | null;
@@ -389,6 +433,51 @@ export type Database = {
           },
         ];
       };
+      contact_log: {
+        Row: {
+          id: string;
+          lead_id: string;
+          agent_id: string | null;
+          method: ContactMethod;
+          outcome: ContactOutcome;
+          body: string | null;
+          contacted_at: string;
+        };
+        Insert: {
+          id?: string;
+          lead_id: string;
+          agent_id?: string | null;
+          method: ContactMethod;
+          outcome: ContactOutcome;
+          body?: string | null;
+          contacted_at?: string;
+        };
+        Update: {
+          id?: string;
+          lead_id?: string;
+          agent_id?: string | null;
+          method?: ContactMethod;
+          outcome?: ContactOutcome;
+          body?: string | null;
+          contacted_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "contact_log_agent_id_fkey";
+            columns: ["agent_id"];
+            isOneToOne: false;
+            referencedRelation: "agent";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "contact_log_lead_id_fkey";
+            columns: ["lead_id"];
+            isOneToOne: false;
+            referencedRelation: "lead";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -397,6 +486,9 @@ export type Database = {
       lead_side: LeadSide;
       message_direction: MessageDirection;
       message_channel: MessageChannel;
+      lead_status: LeadStatus;
+      activity_event: ActivityEvent;
+      appointment_type: AppointmentType;
     };
     CompositeTypes: Record<string, never>;
   };
@@ -419,3 +511,4 @@ export type Note = Tables<"note">;
 export type Appointment = Tables<"appointment">;
 export type StatusHistory = Tables<"status_history">;
 export type Activity = Tables<"activity">;
+export type ContactLog = Tables<"contact_log">;

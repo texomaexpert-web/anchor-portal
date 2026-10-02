@@ -14,6 +14,16 @@ function DashboardIcon({ className }: { className?: string }) {
   );
 }
 
+function LeadsIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className={className} aria-hidden>
+      <circle cx="6" cy="5.5" r="2.5" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M1.5 14c.4-2.5 2.2-4 4.5-4s4.1 1.5 4.5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M10.5 3.2a2.5 2.5 0 0 1 0 4.6M12.2 10.3c1.2.6 2 1.9 2.3 3.7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function InspectorIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 16 16" fill="none" className={className} aria-hidden>
@@ -44,9 +54,14 @@ function StudioIcon({ className }: { className?: string }) {
 
 const tools = [
   { name: "Agent Dashboard", href: "/", enabled: true, Icon: DashboardIcon },
+  { name: "Leads", href: "/leads", enabled: true, Icon: LeadsIcon },
   { name: "Inspector", href: null, enabled: false, Icon: InspectorIcon },
   { name: "Studio", href: null, enabled: false, Icon: StudioIcon },
 ] as const;
+
+function isActive(pathname: string, href: string): boolean {
+  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
 
 export function Nav() {
   const pathname = usePathname();
@@ -59,14 +74,14 @@ export function Nav() {
             key={tool.name}
             href={tool.href}
             className={`flex items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              pathname === tool.href
+              isActive(pathname, tool.href)
                 ? "bg-raised text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
                 : "text-ink-muted hover:bg-raised/60 hover:text-ink"
             }`}
           >
             <tool.Icon
               className={`h-4 w-4 shrink-0 ${
-                pathname === tool.href ? "text-accent" : "text-ink-faint"
+                isActive(pathname, tool.href) ? "text-accent" : "text-ink-faint"
               }`}
             />
             {tool.name}

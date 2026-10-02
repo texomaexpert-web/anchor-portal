@@ -1,5 +1,6 @@
 import type { TodayAppointment } from "@/lib/data/dashboard";
 import { formatTime } from "@/lib/time";
+import { leadName } from "@/components/leads/badges";
 import { Card, EmptyLine } from "./card";
 
 export function TodayAppointments({
@@ -22,9 +23,7 @@ export function TodayAppointments({
               </span>
               <div className="min-w-0 leading-snug">
                 <div className="truncate text-sm font-medium text-ink">
-                  {appt.lead
-                    ? `${appt.lead.first_name} ${appt.lead.last_name}`
-                    : "Unknown lead"}
+                  {appt.lead ? leadName(appt.lead) : "Unknown lead"}
                   <span className="ml-2 text-xs font-normal capitalize text-ink-faint">
                     {appt.type.replaceAll("_", " ")}
                   </span>

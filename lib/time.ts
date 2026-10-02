@@ -66,3 +66,37 @@ export function overdueLabel(iso: string, now = new Date()): string {
   if (hours < 24) return `${hours}h overdue`;
   return `${Math.floor(hours / 24)}d overdue`;
 }
+
+// YYYY-MM-DD for a moment, as the calendar reads in Central — the value a
+// <input type="date"> expects.
+export function localDateString(at: Date = new Date()): string {
+  return dayFmt.format(at);
+}
+
+export function addDays(at: Date, days: number): Date {
+  return new Date(at.getTime() + days * 24 * 3_600_000);
+}
+
+// A YYYY-MM-DD picked in a date input → UTC instant at that hour, Central.
+export function localDateToUtc(dateStr: string, hour = 9): Date {
+  return new Date(localMidnightUtc(dateStr).getTime() + hour * 3_600_000);
+}
+
+export function formatDate(iso: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: BROKERAGE_TZ,
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(iso));
+}
+
+export function formatDateTime(iso: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: BROKERAGE_TZ,
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
